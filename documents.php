@@ -42,11 +42,11 @@
                         <th>date_recieve</th><th>date_doc</th></tr></thead>
                 <tbody>
                 <?php
-                include"database.php";
-                $query = "SELECT `lcp3_document`.*, `lcp3_docdetail`.* FROM `lcp3_document` , `lcp3_docdetail` WHERE `lcp3_docdetail`.`document_ID` = `lcp3_document`.`ID";
-                       
-                if ($result = mysqli_query($conn,$query) ) {
-                  while($row = mysqli_fetch_assoc($result)) { ?>
+                include "database.php";
+                $sql = "SELECT * FROM lcp3_document, lcp3_docdetail WHERE lcp3_docdetail.document_ID = lcp3_document.ID";
+                $result = $mysqli->query($sql);
+                if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) { ?>
                     <tr>
                       <td><?php echo $row["ID"]; ?> </td>
                       <td><?php echo $row["number"]; ?> </td>
@@ -54,12 +54,12 @@
                       <td><?php echo $row["date_recieve"]; ?> </td>
                       <td><?php echo $row["date_doc"]; ?> </td>
                     </tr>
-                <?php } 
+                <?php }
                   
                 } else {
                     echo '0 results';
                     }
-                    mysqli_close($conn);
+                    $mysqli->close();
                 ?>
                 </tbody>
                         <tfoot>

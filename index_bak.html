@@ -35,7 +35,6 @@
       }
     }
   </style>
-
   <!--https://www.discussdesk.com/bootstrap-datatable-with-php-mysql-server-side-script.htm -->
   <!-- นำเข้า  Javascript จาก  Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -177,6 +176,28 @@
                         <thead><tr><th>ID</th><th>Number</th><th>Title</th>
                         <th>date_recieve</th><th>date_doc</th></tr></thead>
                 <tbody>
+                <?php
+                include "database.php";
+                $sql = 'SELECT * FROM lcp3_document, lcp3_docdetail WHERE lcp3_docdetail.document_ID = lcp3_document.ID';
+                $result = $mysqli->query($sql);
+                if ($result->num_rows > 0) {
+                  // output data of each row
+                  while($row = $result->fetch_assoc())
+                   {
+                      echo "<tr>";
+                        echo "<td>". $row["ID"] . "</td>";
+                        echo "<td>". $row["number"] . "</td>";
+                        echo "<td>". $row["title"] . "</td>";
+                        echo "<td>". $row["date_recieve"] . "</td>";
+                        echo "<td>". $row["date_doc"] . "</td>";
+                      echo "</tr>";
+                    }
+                  
+                } else {
+                    echo "0 results";
+                    }
+                $mysqli->close();   
+                ?>
                 </tbody>
                         <tfoot>
                           <tr>
