@@ -15,10 +15,10 @@
 $aColumns = array('number', 'title', 'date_recieve', 'date_doc');
 
 /* Indexed column (used for fast and accurate table cardinality) */
-$sIndexColumn = "id";
+$sIndexColumn = "ID";
 
 /* DB table to use */
-$sTable = "lcp3_docdetail, lcp3_document";
+$sTable = "lcp3_docinf";
 
 /* Database connection information */
 $gaSql['user'] = "nattanin";
@@ -35,35 +35,33 @@ $gaSql['server'] = "localhost";
 /*
 * Local functions
 */
-function fatal_error ( $sErrorMessage = '' )
+function fatal_error($sErrorMessage = '')
 {
-header( $_SERVER['SERVER_PROTOCOL'] .' 500 Internal Server Error' );
-die( $sErrorMessage );
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error');
+    die($sErrorMessage);
 }
 
 
 /*
 * MySQL connection
 */
-if ( ! $gaSql['link'] = mysqli_pconnect( $gaSql['server'], $gaSql['user'], $gaSql['password'] ) )
-{
-fatal_error( 'Could not open connection to server' );
+if (!$gaSql['link'] = new mysqli($gaSql['server'], $gaSql['user'], $gaSql['password'], $gaSql['db'])) {
+    fatal_error('Could not open connection to server');
 }
-
+/*
 if ( ! mysqli_select_db( $gaSql['db'], $gaSql['link'] ) )
 {
 fatal_error( 'Could not select database ' );
 }
-
-
+*/
+$gaSql['link']->set_charset("utf8");
 /*
 * Paging
 */
 $sLimit = "";
-if ( isset( $_GET['iDisplayStart'] ) && $_GET['iDisplayLength'] != '-1' )
-{
-$sLimit = "LIMIT ".intval( $_GET['iDisplayStart'] ).", ".
-intval( $_GET['iDisplayLength'] );
+if (isset($_GET['iDisplayStart']) && $_GET['iDisplayLength'] != '-1') {
+    $sLimit = "LIMIT " . intval($_GET['iDisplayStart']) . ", " .
+        intval($_GET['iDisplayLength']);
 }
 
 
@@ -71,23 +69,19 @@ intval( $_GET['iDisplayLength'] );
 * Ordering
 */
 $sOrder = "";
-if ( isset( $_GET['iSortCol_0'] ) )
-{
-$sOrder = "ORDER BY ";
-for ( $i=0 ; $i<intval( $_GET['iSortingCols'] ) ; $i++ )
-{
-if ( $_GET[ 'bSortable_'.intval($_GET['iSortCol_'.$i]) ] == "true" )
-{
-$sOrder .= $aColumns[ intval( $_GET['iSortCol_'.$i] ) ]."
-".($_GET['sSortDir_'.$i]==='asc' ? 'asc' : 'desc') .", ";
-}
-}
+if (isset($_GET['iSortCol_0'])) {
+    $sOrder = "ORDER BY ";
+    for ($i = 0; $i < intval($_GET['iSortingCols']); $i++) {
+        if ($_GET['bSortable_' . intval($_GET['iSortCol_' . $i])] == "true") {
+            $sOrder .= $aColumns[intval($_GET['iSortCol_' . $i])] . "
+" . ($_GET['sSortDir_' . $i] === 'asc' ? 'asc' : 'desc') . ", ";
+        }
+    }
 
-$sOrder = substr_replace( $sOrder, "", -2 );
-if ( $sOrder == "ORDER BY" )
-{
-$sOrder = "";
-}
+    $sOrder = substr_replace($sOrder, "", -2);
+    if ($sOrder == "ORDER BY") {
+        $sOrder = "";
+    }
 }
 
 
@@ -97,36 +91,28 @@ $sOrder = "";
 * word by word on any field. It's possible to do here, but concerned about efficiency
 * on very large tables, and MySQL's regex functionality is very limited
 */
-$sWhere = "lcp3_docdetail.document_ID = lcp3_document.ID";
-if ( isset($_GET['sSearch']) && $_GET['sSearch'] != "" )
-{
-$sWhere = "WHERE (";
-for ( $i=0 ; $i<count($aColumns) ; $i++ )
-{
-if ( isset($_GET['bSearchable_'.$i]) && $_GET['bSearchable_'.$i] == "true" )
-{
-$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string( $_GET['sSearch'] )."%' OR ";
-}
-}
-$sWhere = substr_replace( $sWhere, "", -3 );
-$sWhere .= ')';
+$sWhere = "";
+if (isset($_GET['sSearch']) && $_GET['sSearch'] != "") {
+    $sWhere = "WHERE (";
+    for ($i = 0; $i < count($aColumns); $i++) {
+        if (isset($_GET['bSearchable_' . $i]) && $_GET['bSearchable_' . $i] == "true") {
+            $sWhere .= $aColumns[$i] . " LIKE '%" . mysql_real_escape_string($_GET['sSearch']) . "%' OR ";
+        }
+    }
+    $sWhere = substr_replace($sWhere, "", -3);
+    $sWhere .= ')';
 }
 
 /* Individual column filtering */
-for ( $i=0 ; $i<count($aColumns) ; $i++ )
-{
-if ( isset($_GET['bSearchable_'.$i]) && $_GET['bSearchable_'.$i] == "true" && $_GET['sSearch_'.$i] != '' )
-{
-if ( $sWhere == "" )
-{
-$sWhere = "WHERE ";
-}
-else
-{
-$sWhere .= " AND ";
-}
-$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($_GET['sSearch_'.$i])."%' ";
-}
+for ($i = 0; $i < count($aColumns); $i++) {
+    if (isset($_GET['bSearchable_' . $i]) && $_GET['bSearchable_' . $i] == "true" && $_GET['sSearch_' . $i] != '') {
+        if ($sWhere == "") {
+            $sWhere = "WHERE ";
+        } else {
+            $sWhere .= " AND ";
+        }
+        $sWhere .= $aColumns[$i] . " LIKE '%" . mysql_real_escape_string($_GET['sSearch_' . $i]) . "%' ";
+    }
 }
 
 
@@ -137,63 +123,69 @@ SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $aColumns))."
 FROM $sTable
 */
 $sQuery = "
-SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $aColumns))."
+SELECT SQL_CALC_FOUND_ROWS " . str_replace(" , ", " ", implode(", ", $aColumns)) . "
 FROM $sTable
 $sWhere
 $sOrder
 $sLimit
 ";
 
-$rResult = mysql_query( $sQuery, $gaSql['link'] ) or fatal_error( 'MySQL Error: ' . mysql_errno() );
+/*$rResult = mysqli_query($sQuery, $gaSql['link']) or die(mysqli_errno($sQuery)); */
+$rResult = $gaSql['link']->query($sQuery) or die($gaSql['link']->error);
+
 
 /* Data set length after filtering */
 $sQuery = "
 SELECT FOUND_ROWS()
 ";
-$rResultFilterTotal = mysql_query( $sQuery, $gaSql['link'] ) or fatal_error( 'MySQL Error: ' . mysql_errno() );
-$aResultFilterTotal = mysql_fetch_array($rResultFilterTotal);
+/*$rResultFilterTotal = mysqli_query($sQuery, $gaSql['link']) or die('MySQL Error: ' . mysqli_errno($sQuery));
+$aResultFilterTotal = mysqli_fetch_array($rResultFilterTotal);*/
+$rResultFilterTotal = $gaSql['link']->query($sQuery) or die($gaSql['link']->error);
+$aResultFilterTotal = $rResultFilterTotal->fetch_array();
+
 $iFilteredTotal = $aResultFilterTotal[0];
 
 /* Total data set length */
 $sQuery = "
-SELECT COUNT(".$sIndexColumn.")
+SELECT COUNT(" . $sIndexColumn . ")
 FROM $sTable
 ";
-$rResultTotal = mysql_query( $sQuery, $gaSql['link'] ) or fatal_error( 'MySQL Error: ' . mysql_errno() );
-$aResultTotal = mysql_fetch_array($rResultTotal);
+/*$rResultTotal = mysqli_query($sQuery, $gaSql['link']) or die('MySQL Error: ' . mysqli_errno($sQuery));
+$aResultTotal = mysqli_fetch_array($rResultTotal);*/
+
+$rResultTotal = ($gaSql['link']->query($sQuery)) or die($gaSql['link']->error);
+$aResultTotal = $rResultTotal->fetch_array();
+
 $iTotal = $aResultTotal[0];
 
 
 /*
 * Output
-*/
-/*
+
+
 $output = array(
-"sEcho" => intval($_GET['sEcho']),
-"iTotalRecords" => $iTotal,
-"iTotalDisplayRecords" => $iFilteredTotal,
-"aaData" => array()
+    "sEcho" => intval($_GET['sEcho']),
+    "iTotalRecords" => $iTotal,
+    "iTotalDisplayRecords" => $iFilteredTotal,
+    "aaData" => array()
 );
 */
+/*while ($aRow = $rResult->fetch_array(MYSQLI_ASSOC)) {*/
 
-while ( $aRow = mysql_fetch_array( $rResult ) )
-{
-$row = array();
-for ( $i=0 ; $i<count($aColumns) ; $i++ )
-{
-if ( $aColumns[$i] == "version" )
-{
-/* Special output formatting for 'version' column */
-$row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
-}
-else if ( $aColumns[$i] != ' ' )
-{
-/* General output */
-$row[] = $aRow[ $aColumns[$i] ];
-}
-}
-$output['aaData'][] = $row;
+
+
+while ($aRow = mysqli_fetch_array($rResult, MYSQLI_ASSOC)) {
+    $row = array();
+    for ($i = 0; $i < count($aColumns); $i++) {
+        if ($aColumns[$i] == "version") {
+            /* Special output formatting for 'version' column */
+            $row[] = ($aRow[$aColumns[$i]] == "0") ? '-' : $aRow[$aColumns[$i]];
+        } else if ($aColumns[$i] != ' ') {
+            /* General output */
+            $row[] = $aRow[$aColumns[$i]];
+        }
+    }
+    $output['aaData'][] = $row;
 }
 
-echo json_encode( $output );
-?>
+echo json_encode($output);
