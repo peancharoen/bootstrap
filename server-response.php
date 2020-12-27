@@ -185,7 +185,7 @@ while ($aRow = mysqli_fetch_array($rResult, MYSQLI_ASSOC)) {
             $row[] = $aRow[$aColumns[$i]];
         }
     }
-    $output['aaData'][] = $row;
+    $data['aaData'][] = $row;
 }
 
-echo json_encode($output);
+echo json_encode($data);
