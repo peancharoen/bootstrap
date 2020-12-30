@@ -34,4 +34,8 @@ class db_con {
         $checkemail = $this->db_con->query("SELECT email FROM lcp3_users WHERE email='$ueml'");
         return $checkemail;
     }  
+    public function login($ueml, $password) {
+        $login = $this->db_con->query("SELECT email password  FROM lcp3_users WHERE email='$ueml' AND password='$password'");
+        return $login;
+    }  
 }
