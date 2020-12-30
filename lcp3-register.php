@@ -11,10 +11,11 @@
 		$usql = $regdata->registration($fname, $lname, $uemail, $upassword);
 		if ($usql) {
 			echo "<script>alert('Registor Success!')</script>";
-			echo "<script>window.location.href=''lcp3-login.php'</script>";
+			echo "<script>window.location.href='lcp3-login.php'</script>";
 		} else {
-			echo "<script>alert('Cannot regist! Please try again.')</script>";
-			echo "<script>window.location.href=''lcp3-login.php'</script>";
+			echo "<script>alert('Cannot regist! Please try again.'.$usql)</script>";
+			echo "<script>window.location.href='lcp3-register.php'</script>";
+			
 		}
 	}
 
@@ -31,8 +32,10 @@
 	<!-- Bootstrap core CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
 	integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
+	
+	<!-- นำเข้า  Javascript จาก  Jquery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 <body>
   <div class="container mt-5 pt-5 mb-5">
@@ -60,10 +63,10 @@
 									 </div>
 									 <div class="form-group mb-3">
 											<label for="password">Password</label>
-											<div class="input-group bg-light" id="show_hide_password">
-												 <input type="password" class="form-control" id="password" value="Passwords" name="password"  placeholder="Enter Password" required="">
+											<div class="input-group bg-light" id="show_hide_password" >
+												 <input type="password" class="form-control" id="password" value="Password" name="password"  placeholder="Enter Password" required="">
 												 <div class="input-group-addon">
-														<a href=""><i class="fa fa-lg fa-eye" style="padding-top: 10px; padding-left: 10px; padding-right: 10px;" aria-hidden="true"></i></a>
+												 <a><i class="fa fa-lg fa-eye" style="padding-top: 10px; padding-left: 10px; padding-right: 10px;" aria-hidden="true"></i></a>
 												 </div>
 											</div>
 									 </div>
@@ -72,6 +75,7 @@
 									 </div>
 									 <script>
 										 	jQuery.noConflict();
+
 											jQuery(document).ready(function($) {
 													$("#show_hide_password a").on('click', function(event) {
 															event.preventDefault();
@@ -103,19 +107,23 @@
 				data: 'email='+val,
 				success: function(data){
 					$('#emailavailable').html(data);
-
 				}
 
 			});
 		}
 	</script>					
-	
-	
+	<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+      integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+      crossorigin="anonymous"></script>		
  	<!-- JavaScript Bundle with Popper -->
  	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
     integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU"
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
     integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
-    crossorigin="anonymous"></script>
+		crossorigin="anonymous"></script>
+	
+		<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+      integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+      crossorigin="anonymous"></script>
 </html>
